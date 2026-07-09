@@ -1,0 +1,11 @@
+.venv/
+.claude/
+__pycache__/
+*.pyc
+.env
+.idea/
+logs/
+data/*.duckdb
+data/app.db
+.pytest_cache/
+golden_bucket/candidates/
