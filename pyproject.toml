@@ -1,0 +1,9 @@
+[project]
+name = "data-analysis-chat-assistant"
+version = "0.1.0"
+description = "LLM-powered data analysis chat assistant for retail executives"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

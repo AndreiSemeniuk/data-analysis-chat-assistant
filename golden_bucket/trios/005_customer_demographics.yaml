@@ -1,0 +1,19 @@
+question: "What does our customer base look like demographically and where do new customers come from?"
+sql: |
+  SELECT
+    u.traffic_source,
+    u.gender,
+    COUNT(DISTINCT u.id) AS customers,
+    ROUND(AVG(u.age), 1) AS avg_age,
+    ROUND(SUM(oi.sale_price), 2) AS revenue
+  FROM users u
+  LEFT JOIN order_items oi
+    ON oi.user_id = u.id AND oi.status NOT IN ('Cancelled', 'Returned')
+  GROUP BY u.traffic_source, u.gender
+  ORDER BY revenue DESC
+report: |
+  **Customer base profile.** Demographics are always tied back to revenue -
+  a big low-spending segment matters less than a small high-spending one.
+  Analyst convention: customers are described only in aggregate (counts,
+  averages, segments); individual contact information never appears in
+  demographic reports.

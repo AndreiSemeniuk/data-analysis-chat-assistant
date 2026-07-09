@@ -1,0 +1,21 @@
+question: "Which products are selling fastest recently, and which are stalling?"
+sql: |
+  SELECT
+    p.name AS product,
+    p.brand,
+    p.category,
+    COUNT(*) AS units_sold_90d,
+    ROUND(SUM(oi.sale_price), 2) AS revenue_90d
+  FROM order_items oi
+  JOIN products p ON p.id = oi.product_id
+  WHERE oi.status NOT IN ('Cancelled', 'Returned')
+    AND DATE(oi.created_at) >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)
+  GROUP BY product, p.brand, p.category
+  ORDER BY units_sold_90d DESC
+  LIMIT 20
+report: |
+  **Product velocity, last 90 days.** Velocity is measured in units over a
+  fixed recent window (90 days) rather than all time, so newly launched
+  products compete fairly with the back catalog. Fast movers inform restock
+  priority; the same query sorted ascending reveals stalling SKUs that are
+  markdown candidates.

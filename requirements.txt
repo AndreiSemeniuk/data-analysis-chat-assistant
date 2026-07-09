@@ -1,0 +1,13 @@
+langgraph>=1.0
+langchain>=1.0
+langchain-google-genai>=2.0
+langchain-openai>=0.3          # optional fallback provider (OpenRouter), safe to keep installed
+google-cloud-bigquery>=3.13.0
+db-dtypes>=1.2.0
+pandas>=2.0.0
+duckdb>=1.0                    # local demo database (no GCP account needed)
+sqlglot>=25.0                  # SQL validation / dialect transpiling
+pyyaml>=6.0
+python-dotenv>=1.0.0
+rich>=13.0                     # CLI rendering
+pytest>=8.0                    # dev: unit tests

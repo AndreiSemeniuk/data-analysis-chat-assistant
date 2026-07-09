@@ -1,0 +1,21 @@
+question: "Who are our top 10 customers by total spend?"
+sql: |
+  SELECT
+    u.id AS user_id,
+    CONCAT(u.first_name, ' ', u.last_name) AS customer_name,
+    u.country,
+    ROUND(SUM(oi.sale_price), 2) AS total_spend,
+    COUNT(DISTINCT oi.order_id) AS orders_count
+  FROM order_items oi
+  JOIN users u ON u.id = oi.user_id
+  WHERE oi.status NOT IN ('Cancelled', 'Returned')
+  GROUP BY u.id, customer_name, u.country
+  ORDER BY total_spend DESC
+  LIMIT 10
+report: |
+  **Top customers by lifetime spend.** The 10 highest-spending customers
+  account for a meaningful share of revenue; the leader has spent noticeably
+  more than #10, so there is a real VIP tier worth nurturing. Note: analyst
+  convention is to exclude Cancelled and Returned items from spend, and to
+  identify customers by name only - contact details are never included in
+  reports.

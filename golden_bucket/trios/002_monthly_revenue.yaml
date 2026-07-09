@@ -1,0 +1,17 @@
+question: "What is our monthly revenue trend for the last 12 months?"
+sql: |
+  SELECT
+    FORMAT_DATE('%Y-%m', DATE(oi.created_at)) AS month,
+    ROUND(SUM(oi.sale_price), 2) AS revenue,
+    COUNT(DISTINCT oi.order_id) AS orders
+  FROM order_items oi
+  WHERE oi.status NOT IN ('Cancelled', 'Returned')
+    AND DATE(oi.created_at) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+  GROUP BY month
+  ORDER BY month
+report: |
+  **Revenue trend, trailing 12 months.** Revenue is reported by calendar
+  month using item-level sale price, excluding cancellations and returns.
+  The analyst convention: always show the order count next to revenue so a
+  revenue swing can be attributed to volume vs basket size, and always name
+  the covered period explicitly.

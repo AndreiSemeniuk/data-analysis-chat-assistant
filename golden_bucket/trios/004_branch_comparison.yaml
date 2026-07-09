@@ -1,0 +1,22 @@
+question: "Why is one region underperforming and how does it compare to another region?"
+sql: |
+  SELECT
+    u.country AS region,
+    ROUND(SUM(oi.sale_price), 2) AS revenue,
+    COUNT(DISTINCT oi.order_id) AS orders,
+    COUNT(DISTINCT oi.user_id) AS active_customers,
+    ROUND(SAFE_DIVIDE(SUM(oi.sale_price), COUNT(DISTINCT oi.order_id)), 2) AS avg_order_value,
+    ROUND(100 * COUNTIF(oi.status = 'Returned') / COUNT(*), 1) AS return_rate_pct
+  FROM order_items oi
+  JOIN users u ON u.id = oi.user_id
+  WHERE oi.status != 'Cancelled'
+    AND DATE(oi.created_at) >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)
+  GROUP BY region
+  ORDER BY revenue DESC
+report: |
+  **Regional comparison - decomposing underperformance.** An underperforming
+  region is diagnosed by decomposing revenue into its drivers: active
+  customers x orders per customer x average order value, plus the return
+  rate as a quality signal. The comparison is made over the same recent
+  window (6 months) for all regions so seasonality cancels out. The report
+  states WHICH driver explains the gap, not just that a gap exists.

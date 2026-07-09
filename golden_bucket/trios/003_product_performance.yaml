@@ -1,0 +1,19 @@
+question: "Which product categories perform best and worst by profit?"
+sql: |
+  SELECT
+    p.category,
+    ROUND(SUM(oi.sale_price), 2) AS revenue,
+    ROUND(SUM(oi.sale_price - p.cost), 2) AS gross_profit,
+    ROUND(SAFE_DIVIDE(SUM(oi.sale_price - p.cost), SUM(oi.sale_price)) * 100, 1) AS margin_pct,
+    COUNT(*) AS items_sold
+  FROM order_items oi
+  JOIN products p ON p.id = oi.product_id
+  WHERE oi.status NOT IN ('Cancelled', 'Returned')
+  GROUP BY p.category
+  ORDER BY gross_profit DESC
+report: |
+  **Category profitability.** Performance is judged on gross profit
+  (sale price minus product cost), not raw revenue - a high-revenue,
+  low-margin category can rank below a smaller high-margin one. Analyst
+  convention: report margin % alongside absolute profit and use SAFE_DIVIDE
+  to avoid division-by-zero on empty categories.
